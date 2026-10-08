@@ -6,17 +6,17 @@ This is a personal fork of [Johni0702/bobby](https://github.com/Johni0702/bobby)
 The inherited implementation and commit history belong to the upstream project
 and its contributors.
 
-- The current source targets **Minecraft 26.2**, with Bobby **5.2.15**.
-- Despite this repository's name, a Minecraft 26.3 port is not published on the
-  default branch. Check [gradle.properties](gradle.properties) and the Minecraft
-  dependency in [fabric.mod.json](src/main/resources/fabric.mod.json) for the
-  actual target version.
+- The current source targets **Minecraft 26.3**, with Bobby **5.2.16**.
+- The port follows upstream release
+  [v5.2.16+mc26.3](https://github.com/Johni0702/bobby/releases/tag/v5.2.16%2Bmc26.3),
+  including the Minecraft 26.3 mappings and dependency updates.
 - The download badges below link to **upstream releases**; they are not releases
   of this fork.
 
-Fork-specific code changes and compatibility results will be documented here
-when they are published. The current update documents the fork's status without
-claiming a new Minecraft port.
+The fork currently carries the upstream 26.3 port without claiming an
+independent published release. Check [gradle.properties](gradle.properties) and
+the Minecraft dependency in [fabric.mod.json](src/main/resources/fabric.mod.json)
+for the exact target.
 
 ### Build from source
 
@@ -28,8 +28,8 @@ Install **JDK 25**, which matches the source and target compatibility in
 ```
 
 On Windows, use `gradlew.bat build`. Build artifacts are written to `build/libs/`.
-Building the source does not establish compatibility with a different Minecraft
-version; test it with the version declared above.
+The build targets Java 25 and Minecraft 26.3; using another Minecraft version
+requires a separate port.
 
 ## About Bobby
 
