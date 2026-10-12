@@ -1,60 +1,93 @@
-# Bobby — snowtravit fork
+# 🧱 Bobby · Minecraft 26.3
 
-## Fork status
+[![Minecraft 26.3](https://img.shields.io/badge/Minecraft-26.3-62B47A)](https://github.com/snowtravit/bobby-26.3/releases/latest)
+[![Fabric](https://img.shields.io/badge/Loader-Fabric-DBD0B4)](https://fabricmc.net/use/installer/)
+[![Java 25](https://img.shields.io/badge/Java-25-E97627)](https://adoptium.net/)
+[![LGPL-3.0-or-later](https://img.shields.io/badge/License-LGPL--3.0--or--later-4274B8)](LICENSE.LESSER.md)
 
-This is a personal fork of [Johni0702/bobby](https://github.com/Johni0702/bobby).
-The inherited implementation and commit history belong to the upstream project
-and its contributors.
+Bobby keeps previously visited chunks visible beyond a server's view distance.
+It saves chunks sent by the server in `.minecraft/.bobby` and loads them again
+when they leave the server's view distance.
 
-- The current source targets **Minecraft 26.3**, with Bobby **5.2.16**.
-- The port follows upstream release
-  [v5.2.16+mc26.3](https://github.com/Johni0702/bobby/releases/tag/v5.2.16%2Bmc26.3),
-  including the Minecraft 26.3 mappings and dependency updates.
-- The download badges below link to **upstream releases**; they are not releases
-  of this fork.
+This is **snowtravit's fork** of [Johni0702/Bobby](https://github.com/Johni0702/bobby).
+The Minecraft 26.3 implementation follows upstream
+[v5.2.16+mc26.3](https://github.com/Johni0702/bobby/releases/tag/v5.2.16%2Bmc26.3).
+The original mod, its history, and its contributors remain credited to upstream.
 
-The fork currently carries the upstream 26.3 port without claiming an
-independent published release. Check [gradle.properties](gradle.properties) and
-the Minecraft dependency in [fabric.mod.json](src/main/resources/fabric.mod.json)
-for the exact target.
+**[⬇️ Download the fork release](https://github.com/snowtravit/bobby-26.3/releases/latest)**
+· [📋 Upstream changelog](CHANGELOG.md)
+· [🐛 Report a fork issue](https://github.com/snowtravit/bobby-26.3/issues)
 
-### Build from source
+## 🎮 Install
 
-Install **JDK 25**, which matches the source and target compatibility in
-`build.gradle.kts`, then run the included Gradle wrapper from this directory:
+1. Use **Minecraft 26.3**, **Java 25**, and the
+   [Fabric Loader](https://fabricmc.net/use/installer/). Loader **0.19.5** was used
+   for the packaged JAR runtime check; the source builds against **0.19.3**.
+2. Download `bobby-5.2.16+mc26.3.jar` from this fork's release page.
+3. Put the JAR in your Minecraft instance's `mods` folder and start the Fabric client.
+4. Visit chunks before moving away: Bobby can then display their saved contents.
+
+Bobby is a **client mod**. Cached chunks are a saved view of the world; blocks in
+those chunks can be out of date until the server sends them again.
+
+Optional additions:
+
+| Mod | Purpose | Version targeted by this source |
+| --- | --- | --- |
+| [Sodium](https://modrinth.com/mod/sodium) | Alternative renderer | 0.9.2 for Minecraft 26.3 |
+| [Mod Menu](https://modrinth.com/mod/modmenu) | Open the in-game configuration screen | 21.0.0-beta.1 |
+| [Cloth Config](https://modrinth.com/mod/cloth-config) | Configuration screen support | 26.3.158 |
+
+Install Mod Menu and Cloth Config together to edit settings in game. Bobby also
+reloads its configuration when the config file changes.
+
+## 📸 Checked in Minecraft
+
+![Minecraft 26.3 with Bobby, Sodium 0.9.2, and 42 cached chunks on the debug screen](docs/images/minecraft-26.3-sodium-cache.png)
+
+The packaged release JAR was loaded from `mods` in a local Creative/Superflat
+world. With the integrated server's view distance set to **2**, travelling,
+saving, and reopening the world left **42 cached chunks** loaded by Bobby
+(`F:42` on the debug screen). The same scenarios were checked with the standard
+renderer and with **Sodium 0.9.2**.
+
+The runtime check used software rendering in an offline local world. External
+multiplayer servers and GPU performance were not measured.
+
+## 🗺️ Use a fallback world
+
+Bobby can also read chunks from an existing single-player world that the server
+has never sent. Rename that world's **folder** in `.minecraft/saves` to
+`bobby-fallback`. This is the folder name, not the world's display name.
+
+## 🛠️ Build from source
+
+Install **JDK 25**, clone this repository, and run the included Gradle wrapper:
 
 ```sh
 ./gradlew build
 ```
 
-On Windows, use `gradlew.bat build`. Build artifacts are written to `build/libs/`.
-The build targets Java 25 and Minecraft 26.3; using another Minecraft version
-requires a separate port.
+On Windows:
 
-## About Bobby
+```powershell
+.\gradlew.bat build
+```
 
-[![Modrinth](https://img.shields.io/modrinth/dt/bobby?logo=data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAHZklEQVRoge1afYxUVxV%2FW5aydEsspWrFUkM%2FUlOTes99M0OmUB0TXdhKUpSuf4itmrZUUChitNpz7uSK7dJ1k6VdpAaIxPrVhDYa77lvmKGr01CypUrTFrIx8Q%2FRkvpFC4IFKVt4%2FjEz5M3beW%2Fna7sx8ST3r3n33N%2F5uOfrjuP8n6LJ9%2F0O3%2Fc7phvHpJQp6i43R9dLj5aBpXWC1QAw7hSGfgpMPxZMPwBLCgzelWCdcllfpX19yXSD7oScvlka%2BjoweWDoNcF4Vhj0oxedB8Z%2FAdMrwPSE9Gh5Oq%2BvfPeBs0oD404w9LpgvBAPOnoB03%2BAaRQsrbm1oN835eCTVl8HjI8D07EYUOPAdBKY%2FiaYjpaEpDfjrANM42DwBTDZlb254VltB97n754hOfsZYDo0AQDjBWHoH8CYl0waTHZlgnUqsYduSlp9nczrG5KeFtJmlwKr9YLpZ8D0R2Aar%2BFi%2F5YWt6X54Q%2B2DXx6dGg2WHpQGDoR9mfBeFgaQrlH35Ip6q56lZEs4AJgdbdgKoDBMxMUwlQEVh9tGXxPYbBbsBqYYH6mo8LiQ61qKlPUl0tPfU4wHRCGzofc6hCwSjfNvDc3PEtYehgYz4W0UxBGJdsZ32Gvni8sDQnGt0LWOOyylk0xFUatDZoXmMYF046pihZ9Y%2FpSaej%2BcIAApn0u62sbYgYefgwY%2F3qRicF3gHHr4v0Dc6YCfIV83%2B%2BQjKvA4BvVQuDOeu%2BYkxrpnweMIyEt%2FDxT1Fc0A6o3Nzxrid08t16X832%2FAyytAabTAQWekYyr6joQWK0Hg%2B8ENv8%2BVaCFjYB2D26fKZhuBEv3CKZfAdM%2BYfHWevf35oZnAePWkBIPwl49P3ZjKbxVxfpTwsveUc%2BhmaLuTBVoIbC6G5ieAkOvVSmC8Q%2BuzX6iXiFc1tcC40vBAAKMG2M3SaavBksDYHqyb0xfOtlhyQIuEEw7hMEjtRNUxZr0i0YyrbD4RWHo7YASXooMIov3D8wRjL8NSHxcWnXbZIeUcgXtqqP2OdJoXE%2Fn9ZWC6flA8nwbmO6s%2BTGwSgezLTD9erKbX75w3whqKWKdAoN3NQK%2BQtKqDaEkuqtmKQ6MG4Wh86WQSeOS6b7JmIPJ9gLjP2MrzhK%2Ffvfg9pnNCCCMSgrG4wF%2BY0lPXz3hw6SnBZjsSmnps8LL3gG5%2FvfGMU7soZuA6ZW4ClMwvgyMG5sNwY7jOEvs5rmC8cWgNRM5tbhZfo7jOE6mqK8AxmdiwP9FsLp30cgj72%2FpoDJJi9uC%2FCXTl1sB3wlMm4IhMuzv0qov1MvPPbh9Znp0aHbcN4LVvVUKsuq7TQtQigxVJg31B2ogU9Sdk%2FHJFHVXuWT5kbRqMC68ujb76VA4%2FWHTAjiO4wimB8Ll78VkY2lN3N6ewmC3y7RCMP6yEvWA6aT0aHnUngRTJlRYPtlSNZz09NXA9LvaFsAXo5JNxf1qtpdMxajL3nYBHMdxwNI9Vb1CIGwKpgdqHeAyrZjY2V0E5UVVu9Kj5cGzWnYhx6lUrTQaAeYYWFpXSYQ9hcFu4WU%2FJRgPR9ydv7uMS6LOKltgrCIEMG1qCbzv%2Bx3So2XC0J9iEtgZYHwcLK0Bg3uB6WSEy12QTDrOJbSvLyl1bdgHTD8Bk1054SMw6uOS1deEUWulofsX5fQ1tZhlirpTeupLwYYnetH5mpe92vefbyRfZIq6s2ZWL5USwVhL68LfuKwvE0zfidRmw4tOCKbb6wUfS66nFlXVHIz5nsJgd%2BX31Ej%2FPDA0PPn4sP4lmR6rJ2fURZmivhwM%2FaY6o2aXOo7jgIcfAqanI93h4iyH9tUDHJiOCaZdyQIuaAv4Cgmj1gZBAmM%2BwZQBpufi%2FByYnoK9ev6inL6m1I3VKDNKjdIRYXALeDrRbHUaS2UAhwICnIufg%2BI5aXFbcMK8xG6eKwxuqbhaee75qrD4kGC6ccrH6uGmPsYNTgPTpuA9qVB6dGi2ZPomMD0rme5z8498oBEMi%2FcPzAFWX5EeLWu4FK81VqnhDseB1fq4fjlT1J0u68saOtyplBv47XL7eBqYRqVVG2opKpLCg63qBEWvS8ZVff7uGY2Cqwd86R7iqVCu2NHw2D08Wixr%2Fqy0anW7gTtOKceApQfDOQaY9jUVraKGu%2BUXlU%2B20wJujq4XTLvCOQaYDiVyCppm3FMY7AZDj05gbPANYWnIZf3hVqJKaqR%2FnrRqNRgcqxEkWhuvV6gUUfBbwSwdsMafhcEt0qrb3GcffU89NXqmqLsgp2%2BWVm0QTAdqluRMzyU9LVoGX6E%2Bf%2FcMl2kFGHw1IqSeLIPZKq1aLW12aYJ1qvS0pNwEU0aw%2Bjyw%2Bh4w5koBomZH9xYwPdHWJ6YgpQq0UDI9FpfcSmUFni0L9aYwdKI0aY6uSstN0AFgunNKHvmC1PZnVoMvvGvPrGFBknn1EWDcCIw5wXS0nofuUgmNL0uL26bloTtCmC6Z1zcIptvLT6nfD%2F7VABi3AiNJxlXCqGRqpH%2FetP%2FVoB76n%2Fijx3TTfwGWd%2FQ%2FPbYNFgAAAABJRU5ErkJggg%3D%3D)](https://modrinth.com/mod/bobby)
-[![CurseForge](https://cf.way2muchnoise.eu/short_bobby.svg)](https://www.curseforge.com/minecraft/mc-mods/bobby)
+The resulting JAR is written to `build/libs/`. This source targets Minecraft
+26.3; other Minecraft versions require their matching source and dependencies.
+For IDE setup, see the [Fabric development guide](https://docs.fabricmc.net/develop/getting-started/setting-up-a-development-environment).
 
-Bobby is a Minecraft mod which allows for render distances greater than the server's view-distance setting.
+## 📜 License and credits
 
-It accomplishes this goal by recording and storing (in `.minecraft/.bobby`) all chunks sent by the server which it
-then can load and display at a later point when the chunk is outside the server's view-distance.
+Bobby is licensed under **GNU LGPL version 3 or, at your option, any later
+version** (`LGPL-3.0-or-later`). [LICENSE.LESSER.md](LICENSE.LESSER.md) contains
+the LGPL terms, which incorporate the GPL version 3 text in
+[LICENSE.md](LICENSE.md). Both original license files are retained.
 
-Optionally, it can also use an existing single player world to load in chunks which the server has never sent before.
-To make use of this feature, simply rename the world folder (not the name of the world! the name of its folder!) to "bobby-fallback".
-
-Bobby automatically reloads its config file when it is changed.
-For an in-game config screen, install [ModMenu] and [ClothConfig].
-
-[ModMenu]: https://github.com/Prospector/ModMenu
-[ClothConfig]: https://github.com/shedaniel/cloth-config
-
-## Setup
-
-For setup instructions please see the [fabric wiki page](https://fabricmc.net/wiki/tutorial:setup) that relates to the IDE that you are using.
-
-## License
-
-Bobby is provided under the terms of the GNU Lesser General Public License Version 3 or (at your option) any later version.
-See LICENSE.md and LICENSE.LESSER.md for the full license text.
+The mod was created by **Johni0702** and the
+[upstream contributors](https://github.com/Johni0702/bobby/graphs/contributors).
+This fork preserves their credit and license. Fork downloads are hosted on
+[snowtravit/bobby-26.3](https://github.com/snowtravit/bobby-26.3/releases);
+the upstream project also publishes on [Modrinth](https://modrinth.com/mod/bobby)
+and [CurseForge](https://www.curseforge.com/minecraft/mc-mods/bobby).

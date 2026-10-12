@@ -82,6 +82,7 @@ tasks.withType<AbstractArchiveTask> {
 
 tasks.jar {
 	from("LICENSE.md")
+	from("LICENSE.LESSER.md")
 }
 
 publishing {
