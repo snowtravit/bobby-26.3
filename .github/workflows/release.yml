@@ -1,0 +1,71 @@
+name: Release packages
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to package
+        required: true
+        default: 'v5.2.16+mc26.3-snowtravit.1'
+  push:
+    branches: ['master']
+    paths:
+      - '.github/workflows/release.yml'
+      - '.github/scripts/package_release.py'
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      RELEASE_TAG: ${{ inputs.tag || 'v5.2.16+mc26.3-snowtravit.1' }}
+    steps:
+      - name: Check out packaging tools
+        uses: actions/checkout@v4
+        with:
+          path: release-tools
+          persist-credentials: false
+      - name: Check release state
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          draft="$(gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --json isDraft --jq '.isDraft')"
+          if [ "$GITHUB_EVENT_NAME" = "push" ] && [ "$draft" != "true" ]; then
+            echo 'build=false' >> "$GITHUB_OUTPUT"
+          else
+            echo 'build=true' >> "$GITHUB_OUTPUT"
+          fi
+      - name: Check out the selected source tag
+        if: steps.release.outputs.build == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.RELEASE_TAG }}
+          path: source
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Set up Java
+        if: steps.release.outputs.build == 'true'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: gradle
+      - name: Build release files
+        if: steps.release.outputs.build == 'true'
+        run: |
+          cd source
+          bash ./gradlew --no-daemon build
+      - name: Package sources, licenses, and checksums
+        if: steps.release.outputs.build == 'true'
+        run: |
+          version="$(python3 -c 'from pathlib import Path; p={k.strip():v.strip() for k,v in (line.split("=",1) for line in Path("source/gradle.properties").read_text().splitlines() if "=" in line and not line.lstrip().startswith("#"))}; print(p["modVersion"]+"+mc"+p["minecraftVersion"])')"
+          python3 release-tools/.github/scripts/package_release.py source release-output bobby-26.3 "$version"
+      - name: Attach packages to the existing release
+        if: steps.release.outputs.build == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$RELEASE_TAG" release-output/* --repo "$GITHUB_REPOSITORY" --clobber
